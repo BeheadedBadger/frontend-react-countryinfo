@@ -1,0 +1,34 @@
+img {
+    width: 150px;
+    height: 150px;
+    border-radius: 200px;
+    border:5px solid #EFE7DA;
+    object-fit: cover;
+}
+
+.Title {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #985F99;
+    min-width: 350px;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    margin: -20px;
+    object-fit: cover;
+}
+
+article {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 300px;
+    background-image: linear-gradient(#9684A1, #985F99);
+    border-radius: 20px 0 20px 0;
+    margin: 50px;
+    padding: 50px;
+    border: white solid 2px;
+    box-shadow: 12px 12px 30px 1px rgba(0, 0, 0, .3);
+}
