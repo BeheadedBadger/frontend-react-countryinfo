@@ -1,19 +1,41 @@
+:root {
+    background-image: linear-gradient(90deg, #AAACB0, #B6C9BB, #AAACB0);
+    background-color: #B6C9BB;
+    color: #0E4749;
+}
+
+p, .Not-specified {
+    color: #EFE7DA;
+}
+
 .Africa {
     color: cornflowerblue;
 }
 
-.Americas {
-    color: mediumseagreen;
+.Americas, .SouthAmerica, .NorthAmerica, .TheCaribean, .CentralAmerica{
+    color: #95C623;
 }
 
 .Asia {
-    color: indianred;
+    color: palevioletred;
 }
 
 .Europe {
     color: palegoldenrod;
 }
 
-.Oceania {
+.Oceania, .Oceana {
     color: mediumpurple;
 }
+
+li {
+    list-style-type: none;
+}
+
+ul {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.list-holder

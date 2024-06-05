@@ -2,41 +2,55 @@ import './App.css';
 import axios from "axios";
 import {useState} from "react";
 import {convertToMillions} from "./helpers/convertToMillions.js"
+import CountryCard from "./components/CountryCard.jsx";
 
 function App() {
 
     const [error, toggleError] = useState(false);
     const [resultFound, toggleResultFound] = useState(false);
+    const [resultNotFound, toggleResultNotFound] = useState(false);
     //If it's possible that an object is empty, or might take a while to load, set it to null so you can do a bool check
     const [countries, setCountries] = useState([]);
     const [searchedCountry, setSearchedCountry] = useState(null);
     const [search, setSearch] = useState({
         search: ""
     });
+    const [searchTerm, setSearchTerm] = useState("");
+
+    let form = document.getElementById("Form");
+    if (form != null) {
+    form.addEventListener('submit', handleForm);
+    }
+
+    function handleForm(event) {
+        event.preventDefault();
+    }
 
     async function searchCountry() {
-        toggleError(false);
+        document.getElementById("Form").reset();
         toggleResultFound(false);
-        const apiKeyRestfulCountries = "1006|ZTIQDdc5tdnjSPbcWn5KMVMDzD8AVx3gv48Yy5IJ";
+        toggleResultNotFound(false);
 
-        let searchTerm = {search}.search;
+        const apiKeyRestfulCountries = "1006|ZTIQDdc5tdnjSPbcWn5KMVMDzD8AVx3gv48Yy5IJ";
+        setSearchTerm({search}.search);
 
         try {
-            const response = await axios.get(("https://restfulcountries.com/api/v1/countries/" + searchTerm), {
+            const response = await axios.get("https://restfulcountries.com/api/v1/countries/" + searchTerm, {
                 headers: {
                     "Accept": "application/json",
                     "Authorization": `Bearer ${apiKeyRestfulCountries}`
                 }
             });
-            console.log(response)
+            console.log(response.data.data.name);
             setSearchedCountry(response.data.data);
 
-            console.log(searchedCountry)
+            toggleResultNotFound(false);
             toggleResultFound(true);
         } catch (e) {
-            toggleError(true);
+            console.log({search}.search);
+            setSearchTerm({search}.search);
             toggleResultFound(false);
-            console.error(e);
+            toggleResultNotFound(true);
         }
     }
 
@@ -66,29 +80,37 @@ function App() {
             <h1>World Regions</h1>
             <button type="button" onClick={fetchCountries}>Klik hier</button>
             <ul>{countries.map((country) => {
+                if (country.continent === null) {
+                    country.continent = "Not-specified";
+                }
                 return (
                     <li key={country.iso3}>
-                        <p className={country.continent}>{country.name}</p>
-                        <img src={country.href.flag}></img>
-                        <p>Has a population of {country.population} people</p>
+                        <CountryCard continent={country.continent.replace(/ /g, "")}
+                                     flag={country.href.flag}
+                                     name={country.name}
+                                     funfacts={`Has a population of ${country.population}`}/>
                     </li>
                 )
             })}
             </ul>
-            {error === true && <p>Error!</p>}
+            {error === true && <p>Error! Could not retrieve countries.</p>}
 
-            <form onClick={searchCountry}>
-                Enter country: <input type="text" name="text" onChange={(e) => setSearch(e.target.value)}/>
-                <input type="button" value="Submit"/>
+            <form id="Form">
+                Enter country:
+                <input type="text" name="text" autoComplete="off"
+                       onFocus={(e) => e.target.value = ""}
+                       onSubmit={searchCountry}
+                       onChange={(e) => setSearch(e.target.value)}/>
+                <button type="button" onClick={searchCountry}>Search!</button>
             </form>
 
             {resultFound === true && <div>
-                <img src={searchedCountry.href.flag}/> <h2
-                className={searchedCountry.continent}>{searchedCountry.name}</h2>
-                <p>{searchedCountry.name} is situated in {searchedCountry.continent} and the capital
-                    is {searchedCountry.capital}. It has a population of {convertToMillions(searchedCountry.population)} million people.
-                    Their phone numbers start with {searchedCountry.phone_code}.</p>
+                <CountryCard continent={searchedCountry.continent} flag={searchedCountry.href.flag} name={searchedCountry.name} funfacts={`${searchedCountry.name} is situated in ${searchedCountry.continent} and the capital
+                    is ${searchedCountry.capital}. It has a population of ${convertToMillions(searchedCountry.population)} million people.
+                    Their phone numbers start with ${searchedCountry.phone_code}.`}/>
             </div>}
+
+            {resultNotFound === true && <p>Sorry, cannot find {searchTerm}!</p>}
         </>
     )
 }
